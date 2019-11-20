@@ -40,13 +40,15 @@ class InputfieldRockAwesome extends InputfieldText {
    */
   public function ___render() {
     $attrStr = $this->getAttributesString();
-    $out = "<div class='RockAwesome'>"
+    $id = uniqid();
+    $out = "<div class='RockAwesome ra_$id'>"
       ."<div class='uk-inline uk-width-1-1'>"
         ."<span class='uk-form-icon'><i></i></span>"
         ."<input $attrStr />"
       ."</div>"
       ."<div class='icons uk-margin-small-top uk-child-width-1-1 uk-child-width-1-2@s uk-child-width-1-3@m uk-child-width-1-4@l' uk-grid></div>"
-    ."</div>";
+    ."</div>"
+    ."<script>$('.ra_$id input').change();</script>";
     return $out;
   }
 
