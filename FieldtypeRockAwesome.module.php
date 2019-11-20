@@ -31,4 +31,3 @@ class FieldtypeRockAwesome extends FieldtypeText {
     return $inputField;
   }
 }
-
