@@ -16,6 +16,12 @@ class InputfieldRockAwesomeConfig extends ModuleConfig {
         'notes' => 'Relative to site root (' . $this->config->paths->root . ')',
         'required' => true,
         'value' => 'site/templates/ThemeUikitMaster/assets/fontawesome/metadata/icons.json',
+      ],[
+        'name' => 'link',
+        'label' => 'Link to Icon Cheatsheat',
+        'type' => 'URL',
+        'required' => false,
+        'value' => 'https://fontawesome.com/cheatsheet/pro',
       ],
     ]);
   }

@@ -12,7 +12,7 @@ class InputfieldRockAwesome extends InputfieldText {
     return [
       'title' => __('RockAwesome', __FILE__), // Module Title
       'summary' => __('FontAwesome Icon Chooser', __FILE__), // Module Summary
-      'version' => '0.0.1',
+      'version' => '0.0.2',
       'icon' => 'star-o',
       'requires' => ['FieldtypeRockAwesome'],
     ];
@@ -31,7 +31,13 @@ class InputfieldRockAwesome extends InputfieldText {
 
     $this->addHookBefore("render", function($event) {
       $n = $event->object->notes ? "\n" : "";
-      $event->object->notes .= $n."Start typing to find icons...";
+      $notes = $n."Start typing to find icons";
+
+      $notes .= $this->link
+        ? " or go to [the icon cheatsheet]({$this->link})."
+        : "...";
+
+      $event->object->notes .= $notes;
     });
   }
 
