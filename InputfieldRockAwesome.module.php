@@ -10,9 +10,9 @@ class InputfieldRockAwesome extends InputfieldText {
 
   public static function getModuleInfo() {
     return [
-      'title' => __('RockAwesome', __FILE__), // Module Title
-      'summary' => __('FontAwesome Icon Chooser', __FILE__), // Module Summary
-      'version' => '0.0.2',
+      'title' => 'RockAwesome', // Module Title
+      'summary' => 'FontAwesome Icon Chooser', // Module Summary
+      'version' => '0.0.3',
       'icon' => 'star-o',
       'requires' => ['FieldtypeRockAwesome'],
     ];
@@ -31,10 +31,11 @@ class InputfieldRockAwesome extends InputfieldText {
 
     $this->addHookBefore("render", function($event) {
       $n = $event->object->notes ? "\n" : "";
-      $notes = $n."Start typing to find icons";
+      $notes = $n.__("Start typing to find icons");
 
+      $orgoto = __("or go to the icon cheatsheet");
       $notes .= $this->link
-        ? " or go to [the icon cheatsheet]({$this->link})."
+        ? " [$orgoto]({$this->link})."
         : "...";
 
       $event->object->notes .= $notes;
