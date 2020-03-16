@@ -11,10 +11,10 @@ class FieldtypeRockAwesome extends FieldtypeText {
   public static function getModuleInfo() {
     return [
       'title' => 'RockAwesome',
-      'version' => '0.0.1',
+      'version' => '0.0.2',
       'summary' => 'Field that stores a FontAwesome icon string',
       'icon' => 'star-o',
-      'installs' => ['InputfieldRockAwesome'],
+      'installs' => ['InputfieldRockAwesome', 'RockAwesome'],
     ];
   }
 
