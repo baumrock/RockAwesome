@@ -1,5 +1,7 @@
 # RockAwesome
 
+https://processwire.com/talk/topic/22632-rockawesome-fontawesome-icon-picker/
+
 ## Usage
 
 * Install the module.
