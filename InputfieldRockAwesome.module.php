@@ -12,7 +12,7 @@ class InputfieldRockAwesome extends InputfieldText {
     return [
       'title' => 'RockAwesome', // Module Title
       'summary' => 'FontAwesome Icon Chooser', // Module Summary
-      'version' => '0.0.3',
+      'version' => '0.0.4',
       'icon' => 'star-o',
       'requires' => ['FieldtypeRockAwesome'],
     ];
@@ -23,7 +23,8 @@ class InputfieldRockAwesome extends InputfieldText {
    */
   public function init() {
     $this->stylesheet = $this->config->paths->root . $this->stylesheet;
-    if(!is_file($this->stylesheet)) throw new WireException("Stylesheet not found");
+    if(!is_file($this->stylesheet)) return;
+    
     $style = str_replace($this->config->paths->root, $this->config->urls->root, $this->stylesheet);
     $this->config->styles->add($style);
 
