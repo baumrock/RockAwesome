@@ -22,7 +22,7 @@
     if(icons.indexOf(str) < 0) return;
     return str;
   }
-  
+
   // find icons
   // match both words only
   var findIcons = function(str) {
@@ -43,13 +43,14 @@
     });
     return set;
   }
-  
+
   // show list of icons
   $(document).on('input change', '.RockAwesome input', debounce(function(e) {
     $ra = $(e.target).closest('.RockAwesome');
     $input = $ra.find('input');
     $icons = $ra.find('.icons');
-    var str = $input.val();
+    var str = $input.val()+'';
+    str = str.toLocaleLowerCase();
 
     // show icon in inputfield
     if(getIcon(str)) {
@@ -60,7 +61,7 @@
     else {
       $ra.find('.uk-form-icon i').attr('class', '');
     }
-    
+
     // find icons that match the input
     var set = findIcons(str);
 
