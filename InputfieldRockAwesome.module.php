@@ -28,8 +28,9 @@ class InputfieldRockAwesome extends InputfieldText {
     $style = str_replace($this->config->paths->root, $this->config->urls->root, $this->stylesheet);
     $this->config->styles->add($style);
 
-    // Gewünschte Icon-Styles in JS bekannt machen
-    $this->config->js('RockAwesomeVersion', $this->version);
+    // Versionsinfos und gewünschte Icon-Styles in JS bekannt machen
+    $this->config->js('RockAwesomeVersion', $this->fa_version);
+    $this->config->js('RockAwesomeMembership', $this->fa_membership);
     $this->config->js('RockAwesomeRegular', $this->far);
     $this->config->js('RockAwesomeSolid', $this->fas);
     $this->config->js('RockAwesomeLight', $this->fal);
@@ -48,6 +49,8 @@ class InputfieldRockAwesome extends InputfieldText {
 
       $event->object->notes .= $notes;
     });
+
+
   }
 
   /**

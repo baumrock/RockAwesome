@@ -21,21 +21,32 @@
                 return;
             }
             html = "";
-            $.post( "https://api.fontawesome.com/", { query: 'query { search(version: "'+ProcessWire.config.RockAwesomeVersion+'", query: "'+str+'", first: 50) { id styles } }' }, function( data ) {
+            $.post( "https://api.fontawesome.com/", { query: 'query { search(version: "'+ProcessWire.config.RockAwesomeVersion+'", query: "'+str+'", first: 150) { id label membership {pro free} } }' }, function( data ) {
                 $.each(data.data.search, function(i, icon) {
-                    $.each(icon.styles, function(i,style) {
+                    console.log(ProcessWire.config.RockAwesomeMembership);
+                    console.log(ProcessWire.config.RockAwesomeDuotone);
+                    console.log(icon);
+                    if (ProcessWire.config.RockAwesomeMembership*1>1) {
+                        // Pro
+                        mystyles = icon.membership.pro;
+                    }
+                    else {
+                        mystyles = icon.membership.free;
+                    }
+
+                    $.each(mystyles, function(i,style) {
                         if (
-                            style == "solid" && ProcessWire.config.RockAwesomeSolid
-                            || style == "regular" && ProcessWire.config.RockAwesomeRegular
-                            || style == "light" && ProcessWire.config.RockAwesomeLight
-                            || style == "thin" && ProcessWire.config.RockAwesomeThin
-                            || style == "duotone" && ProcessWire.config.RockAwesomeDuotone
-                            || style == "brands" && ProcessWire.config.RockAwesomeBrands
+                                style == "solid" && ProcessWire.config.RockAwesomeSolid
+                                || style == "regular" && ProcessWire.config.RockAwesomeRegular
+                                || style == "light" && ProcessWire.config.RockAwesomeLight
+                                || style == "thin" && ProcessWire.config.RockAwesomeThin
+                                || style == "duotone" && ProcessWire.config.RockAwesomeDuotone
+                                || style == "brands" && ProcessWire.config.RockAwesomeBrands
                         ) {
-                            html += "<div class='icon' style='cursor: pointer; text-align: center;'>"
-                            +"<i class='fa" + style[0] + " fa-" + icon.id + " fa-2x' style='width: 35px; '></i>"
+                            html += "<div class='icon' style='cursor: pointer; text-align: center;' data-rock-icon='"+"fa" + style[0] + " fa-" +icon.id+"'>"
+                            +"<i class='fa" + style[0] + " fa-" + icon.id + " fa-2x' style='width: 35px;'></i>"
                             +'<br><small>'
-                            +"fa" + style[0] + " fa-" +icon.id
+                            +icon.label
                             +'</small>'
                             +"</div>";
                         }
@@ -50,7 +61,7 @@
     // handle clicks on icons
     $(document).on('click', '.RockAwesome .icon', function(e) {
         let $ra = $(e.target).closest('.RockAwesome');
-        var icon = $(e.target).closest('.icon').text();
+        var icon = $(e.target).closest('.icon').data('rock-icon');
         $icons = $ra.find('.icons');
         $input = $ra.find('input');
         $input.val(icon);
