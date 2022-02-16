@@ -45,7 +45,13 @@ class RockAwesome extends WireData implements Module, ConfigurableModule {
    * @return void
    */
   public function loadFA() {
-    $this->config->styles->add($this->fa);
+    // SEKRU: Muss als letztes geladen werden, damit es keine Konfilkte mit alter FA-Version von ProcessWire gibt
+    $this->addHookAfter('AdminTheme::getExtraMarkup', function(HookEvent $event) {
+        $parts = $event->return;
+        $parts['head'] .= '<link rel="stylesheet" href="'.$this->fa.'">';
+        $event->return = $parts;
+    });
+    // $this->config->styles->add($this->fa);
   }
 
   /**

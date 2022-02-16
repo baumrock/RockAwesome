@@ -1,78 +1,60 @@
 (function() {
-  var icons = ProcessWire.config.RockAwesome;
-  var timers = {};
+    var timers = {};
 
-  // get icon by name (exact match)
-  var getIcon = function(str) {
-    if(icons.indexOf(str) < 0) return;
-    return str;
-  }
+    // show list of icons from fontawesome API
+    $(document).on('input change', '.RockAwesome input', function(e) {
+            let $ra = $(e.target).closest('.RockAwesome');
+            let $li = $ra.closest('.Inputfield');
+            let id = $li.attr('id');
 
-  // find icons
-  // match both words only
-  var findIcons = function(str) {
-    var words = str.split(' ');
-    words = words.filter(function (el) {
-      if(el == '') return false;
-      return el != null;
+            clearTimeout(timers[id]);
+            timers[id] = setTimeout(function() {
+
+            let $input = $ra.find('input');
+            let $icons = $ra.find('.icons');
+            let str = $input.val()+'';
+            str = str.toLocaleLowerCase();
+
+            if (str.match(/fa[srltdb] fa-.*/)) { // Wenn bereits ein gültiger FA-String übergeben wurde
+                $ra.find('.uk-form-icon i').attr('class', str);
+                $icons.html('');
+                return;
+            }
+            html = "";
+            $.post( "https://api.fontawesome.com/", { query: 'query { search(version: "'+ProcessWire.config.RockAwesomeVersion+'", query: "'+str+'", first: 50) { id styles } }' }, function( data ) {
+                $.each(data.data.search, function(i, icon) {
+                    $.each(icon.styles, function(i,style) {
+                        if (
+                            style == "solid" && ProcessWire.config.RockAwesomeSolid
+                            || style == "regular" && ProcessWire.config.RockAwesomeRegular
+                            || style == "light" && ProcessWire.config.RockAwesomeLight
+                            || style == "thin" && ProcessWire.config.RockAwesomeThin
+                            || style == "duotone" && ProcessWire.config.RockAwesomeDuotone
+                            || style == "brands" && ProcessWire.config.RockAwesomeBrands
+                        ) {
+                            html += "<div class='icon' style='cursor: pointer; text-align: center;'>"
+                            +"<i class='fa" + style[0] + " fa-" + icon.id + " fa-2x' style='width: 35px; '></i>"
+                            +'<br><small>'
+                            +"fa" + style[0] + " fa-" +icon.id
+                            +'</small>'
+                            +"</div>";
+                        }
+                    });
+                })
+                $icons.html(html);
+            }, "json");
+
+        }, 300);
     });
-    if(!words.length) return [];
 
-    var set = [];
-    $.each(icons, function(i, icon) {
-      var match = true;
-      $.each(words, function(i, word) {
-        if(icon.indexOf(word) < 0) match = false;
-      });
-      if(match) set.push(icon);
-    });
-    return set;
-  }
-
-  // show list of icons
-  $(document).on('input change', '.RockAwesome input', function(e) {
-    let $ra = $(e.target).closest('.RockAwesome');
-    let $li = $ra.closest('.Inputfield');
-    let $input = $ra.find('input');
-    let $icons = $ra.find('.icons');
-    let str = $input.val()+'';
-    str = str.toLocaleLowerCase();
-    let id = $li.attr('id');
-
-    // debounce changes for every rockawesome inputfield
-    clearTimeout(timers[id]);
-    timers[id] = setTimeout(function() {
-      console.log('fired', id);
-      // show icon in inputfield
-      if(getIcon(str)) {
-        $ra.find('.uk-form-icon i').attr('class', str);
+    // handle clicks on icons
+    $(document).on('click', '.RockAwesome .icon', function(e) {
+        let $ra = $(e.target).closest('.RockAwesome');
+        var icon = $(e.target).closest('.icon').text();
+        $icons = $ra.find('.icons');
+        $input = $ra.find('input');
+        $input.val(icon);
+        $ra.find('.uk-form-icon i').attr('class', icon);
         $icons.html('');
-        return;
-      }
-      else {
-        $ra.find('.uk-form-icon i').attr('class', '');
-      }
-
-      // find icons that match the input
-      var set = findIcons(str);
-
-      // setup string
-      var html = '';
-      $.each(set, function(i, icon) {
-        html += "<div class='icon' style='cursor: pointer;'>"
-          +"<i class='" + icon + "' style='width: 35px; text-align: center;'></i>"
-          +icon
-          +"</div>";
-      });
-
-      $icons.html(html);
-    }, 500);
-  });
-
-  // handle clicks on icons
-  $(document).on('click', '.RockAwesome .icon', function(e) {
-    var icon = $(e.target).closest('.icon').text();
-    $input = $(e.target).closest('.RockAwesome').find('input');
-    $input.val(icon);
-  });
+    });
 }());
