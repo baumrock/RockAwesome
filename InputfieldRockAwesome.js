@@ -1,13 +1,28 @@
 (function() {
   var icons = ProcessWire.config.RockAwesome;
-  var timers = {};
+
+  var debounce = function(func, wait, immediate) {
+    var wait = wait || 500; // 500ms default
+    var timeout;
+    return function() {
+      var context = this, args = arguments;
+      var later = function() {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+      var callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
+  };
 
   // get icon by name (exact match)
   var getIcon = function(str) {
     if(icons.indexOf(str) < 0) return;
     return str;
   }
-
+  
   // find icons
   // match both words only
   var findIcons = function(str) {
@@ -28,46 +43,38 @@
     });
     return set;
   }
-
+  
   // show list of icons
-  $(document).on('input change', '.RockAwesome input', function(e) {
-    let $ra = $(e.target).closest('.RockAwesome');
-    let $li = $ra.closest('.Inputfield');
-    let $input = $ra.find('input');
-    let $icons = $ra.find('.icons');
-    let str = $input.val()+'';
-    str = str.toLocaleLowerCase();
-    let id = $li.attr('id');
+  $(document).on('input change', '.RockAwesome input', debounce(function(e) {
+    $ra = $(e.target).closest('.RockAwesome');
+    $input = $ra.find('input');
+    $icons = $ra.find('.icons');
+    var str = $input.val();
 
-    // debounce changes for every rockawesome inputfield
-    clearTimeout(timers[id]);
-    timers[id] = setTimeout(function() {
-      console.log('fired', id);
-      // show icon in inputfield
-      if(getIcon(str)) {
-        $ra.find('.uk-form-icon i').attr('class', str);
-        $icons.html('');
-        return;
-      }
-      else {
-        $ra.find('.uk-form-icon i').attr('class', '');
-      }
+    // show icon in inputfield
+    if(getIcon(str)) {
+      $ra.find('.uk-form-icon i').attr('class', str);
+      $icons.html('');
+      return;
+    }
+    else {
+      $ra.find('.uk-form-icon i').attr('class', '');
+    }
+    
+    // find icons that match the input
+    var set = findIcons(str);
 
-      // find icons that match the input
-      var set = findIcons(str);
+    // setup string
+    var html = '';
+    $.each(set, function(i, icon) {
+      html += "<div class='icon' style='cursor: pointer;'>"
+        +"<i class='" + icon + "' style='width: 35px; text-align: center;'></i>"
+        +icon
+        +"</div>";
+    });
 
-      // setup string
-      var html = '';
-      $.each(set, function(i, icon) {
-        html += "<div class='icon' style='cursor: pointer;'>"
-          +"<i class='" + icon + "' style='width: 35px; text-align: center;'></i>"
-          +icon
-          +"</div>";
-      });
-
-      $icons.html(html);
-    }, 500);
-  });
+    $icons.html(html);
+  }));
 
   // handle clicks on icons
   $(document).on('click', '.RockAwesome .icon', function(e) {

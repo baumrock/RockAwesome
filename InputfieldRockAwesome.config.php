@@ -6,7 +6,7 @@ class InputfieldRockAwesomeConfig extends ModuleConfig {
         'type' => 'markup',
         'label' => 'HowTo',
         'icon' => 'question',
-        'value' => 'Go to <a href="https://fontawesome.com/download">https://fontawesome.com/download</a> and download your version of FA. Then copy the CSS and METADATA folder to your website and set the paths below.',
+        'value' => 'Go to <a href="https://fontawesome.com/download">https://fontawesome.com/download</a> and download your version of FA. Then copy the CSS and METADATA folder to your website and fill the paths below.',
       ],[
         'name' => 'stylesheet',
         'label' => 'Path to Stylesheet',
