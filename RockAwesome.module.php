@@ -16,7 +16,7 @@ class RockAwesome extends WireData implements Module, ConfigurableModule {
       'autoload' => true,
       'singular' => true,
       'icon' => 'bolt',
-      'requires' => ['FieldtypeRockAwesome'],
+      'requires' => ['FieldtypeRockAwesome', 'InputfieldRockAwesome'],
       'installs' => [],
     ];
   }
@@ -24,9 +24,9 @@ class RockAwesome extends WireData implements Module, ConfigurableModule {
   public function init() {
     $conf = $this->modules->getConfig('InputfieldRockAwesome');
     if(!array_key_exists('stylesheet', $conf)) {
-      $url = $this->pages->get(2)->url."module/edit?name=InputfieldRockAwesome";
-      $link = "<a href='$url'>here</a>";
-      $this->warning("See setup instructions $link", Notice::allowMarkup);
+      $url = $this->pages->get(2)->url."/module/edit?name=InputfieldRockAwesome";
+      $link = "<a href='$url'>InputfieldRockAwesome</a>";
+      $this->warning("You need to add the stylesheet in $link", Notice::allowMarkup);
       return;
     }
     $fa = $this->modules->getConfig('InputfieldRockAwesome')['stylesheet'];
@@ -45,6 +45,12 @@ class RockAwesome extends WireData implements Module, ConfigurableModule {
    * @return void
    */
   public function loadFA() {
+    // Muss als letztes geladen werden, damit es keine Konflikte mit alter FA-Version von ProcessWire gibt
+    // $this->addHookAfter('AdminTheme::getExtraMarkup', function(HookEvent $event) {
+    //     $parts = $event->return;
+    //     $parts['head'] .= '<link rel="stylesheet" href="'.$this->fa.'">';
+    //     $event->return = $parts;
+    // });
     $this->config->styles->add($this->fa);
   }
 

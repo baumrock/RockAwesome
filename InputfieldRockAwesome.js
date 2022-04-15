@@ -1,78 +1,98 @@
 (function() {
-  var icons = ProcessWire.config.RockAwesome;
-  var timers = {};
+   // var timers = {};
+   var debounce = function(func, wait, immediate) {
+      var wait = wait || 500; // 500ms default
+      var timeout;
+      return function() {
+        var context = this, args = arguments;
+        var later = function() {
+          timeout = null;
+          if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+      };
+    };
 
-  // get icon by name (exact match)
-  var getIcon = function(str) {
-    if(icons.indexOf(str) < 0) return;
-    return str;
-  }
 
-  // find icons
-  // match both words only
-  var findIcons = function(str) {
-    var words = str.split(' ');
-    words = words.filter(function (el) {
-      if(el == '') return false;
-      return el != null;
-    });
-    if(!words.length) return [];
+   // show list of icons from fontawesome API
+   $(document).on('input change', '.RockAwesome input', debounce(function(e) {
+      $ra = $(e.target).closest('.RockAwesome');
+      $input = $ra.find('input');
+      $icons = $ra.find('.icons');
+      var str = $input.val() + '';
 
-    var set = [];
-    $.each(icons, function(i, icon) {
-      var match = true;
-      $.each(words, function(i, word) {
-        if(icon.indexOf(word) < 0) match = false;
-      });
-      if(match) set.push(icon);
-    });
-    return set;
-  }
+      $li = $ra.closest('.Inputfield');
+      id = $li.attr('id');
 
-  // show list of icons
-  $(document).on('input change', '.RockAwesome input', function(e) {
-    let $ra = $(e.target).closest('.RockAwesome');
-    let $li = $ra.closest('.Inputfield');
-    let $input = $ra.find('input');
-    let $icons = $ra.find('.icons');
-    let str = $input.val()+'';
-    str = str.toLocaleLowerCase();
-    let id = $li.attr('id');
+      // clearTimeout(timers[id]);
+      // timers[id] = setTimeout(function() {
 
-    // debounce changes for every rockawesome inputfield
-    clearTimeout(timers[id]);
-    timers[id] = setTimeout(function() {
-      console.log('fired', id);
-      // show icon in inputfield
-      if(getIcon(str)) {
-        $ra.find('.uk-form-icon i').attr('class', str);
-        $icons.html('');
-        return;
+      str = str.toLocaleLowerCase();
+
+      if (!str) { // if no string
+         $ra.find('.uk-form-icon i').attr('class', "");
+         return;
       }
-      else {
-        $ra.find('.uk-form-icon i').attr('class', '');
+      // show spinner
+      $ra.find('.uk-form-icon i').attr('class', 'fa fa-spinner fa-spin');
+
+      if (str.match(/fa[srltdb] fa-.*/)) { // if a valid FA string is submitted
+         $ra.find('.uk-form-icon i').attr('class', str);
+         $icons.html('');
+         return;
       }
+      html = "";
 
-      // find icons that match the input
-      var set = findIcons(str);
+      $.post( "https://api.fontawesome.com/", { query: 'query { search(version: "'+ProcessWire.config.RockAwesomeVersion+'", query: "'+str+'", first: 150) { id label membership {pro free} } }' }, function( data ) {
+         $.each(data.data.search, function(i, icon) {
+            console.log(ProcessWire.config.RockAwesomeMembership);
+            console.log(ProcessWire.config.RockAwesomeDuotone);
+            console.log(icon);
+            if (ProcessWire.config.RockAwesomeMembership*1>1) {
+               // Pro
+               mystyles = icon.membership.pro;
+            }
+            else {
+               mystyles = icon.membership.free;
+            }
 
-      // setup string
-      var html = '';
-      $.each(set, function(i, icon) {
-        html += "<div class='icon' style='cursor: pointer;'>"
-          +"<i class='" + icon + "' style='width: 35px; text-align: center;'></i>"
-          +icon
-          +"</div>";
-      });
+            $.each(mystyles, function(i,style) {
+               if (
+                  style == "solid" && ProcessWire.config.RockAwesomeSolid
+                  || style == "regular" && ProcessWire.config.RockAwesomeRegular
+                  || style == "light" && ProcessWire.config.RockAwesomeLight
+                  || style == "thin" && ProcessWire.config.RockAwesomeThin
+                  || style == "duotone" && ProcessWire.config.RockAwesomeDuotone
+                  || style == "brands" && ProcessWire.config.RockAwesomeBrands
+               ) {
+                  html += "<div class='icon' style='cursor: pointer; text-align: center;' data-rock-icon='"+"fa" + style[0] + " fa-" +icon.id+"'>"
+                  +"<i class='fa" + style[0] + " fa-" + icon.id + " fa-2x' style='width: 35px;'></i>"
+                  +'<br><small>'
+                  +icon.label
+                  +'</small>'
+                  +"</div>";
+               }
+            });
+         })
+         $icons.html(html);
+         $ra.find('.uk-form-icon i').attr('class', "");
 
-      $icons.html(html);
-    }, 500);
-  });
+      }, "json");
 
-  // handle clicks on icons
-  $(document).on('click', '.RockAwesome .icon', function(e) {
-    var icon = $(e.target).closest('.icon').text();
-    $input = $(e.target).closest('.RockAwesome').find('input');
-    $input.val(icon);
-  });
+      // }, 300);
+   }));
+
+   // handle clicks on icons
+   $(document).on('click', '.RockAwesome .icon', function(e) {
+      let $ra = $(e.target).closest('.RockAwesome');
+      var icon = $(e.target).closest('.icon').data('rock-icon');
+      $icons = $ra.find('.icons');
+      $input = $ra.find('input');
+      $input.val(icon);
+      $ra.find('.uk-form-icon i').attr('class', icon);
+      $icons.html('');
+   });
 }());
