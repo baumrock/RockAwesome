@@ -14,7 +14,7 @@ class FieldtypeRockAwesome extends FieldtypeText {
       'version' => '0.0.2',
       'summary' => 'Field that stores a FontAwesome icon string',
       'icon' => 'star-o',
-      'installs' => ['InputfieldRockAwesome', 'RockAwesome'],
+      'installs' => ['InputfieldRockAwesome'],
     ];
   }
 

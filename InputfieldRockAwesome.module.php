@@ -12,7 +12,7 @@ class InputfieldRockAwesome extends InputfieldText {
     return [
       'title' => 'RockAwesome', // Module Title
       'summary' => 'FontAwesome Icon Chooser', // Module Summary
-      'version' => '0.0.5',
+      'version' => '0.0.6',
       'icon' => 'star-o',
       'requires' => ['FieldtypeRockAwesome'],
     ];
@@ -65,6 +65,9 @@ class InputfieldRockAwesome extends InputfieldText {
     $out = "<div class='RockAwesome ra_$id'>"
       ."<div class='uk-inline uk-width-1-1'>"
         ."<span class='uk-form-icon'><i></i></span>"
+        // ."<span class='uk-form-icon uk-spinner'><i class='fa fa-spinner'></i></span>"
+
+
         ."<input $attrStr />"
       ."</div>"
       ."<div class='icons uk-margin-small-top uk-child-width-1-2 uk-child-width-1-3@s uk-child-width-1-4@m uk-child-width-1-6@l uk-grid-small' uk-grid></div>"
